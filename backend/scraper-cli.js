@@ -9,8 +9,12 @@ program
     "select historical or new. default is new"
   )
   .option("-s, --since <string>", "since_id of last scraped tweet")
-  .action((arg, options) => {
-    scraper().new(options.type)();
+  .action(async (arg, options) => {
+    try {
+      await scraper().new(options.type)();
+    } catch (err) {
+      console.log(err);
+    }
   });
 
 program.parse();
