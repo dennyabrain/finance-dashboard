@@ -1,0 +1,12 @@
+app = "finance-dashboard"
+
+[build]
+    dockerfile = "Dockerfile"
+
+[env]
+    APP_ENV = "production"
+
+[[services]]
+    internal_port = 8080
+    protocole ="tcp"
+
