@@ -3,18 +3,19 @@ const { scraper } = require("./scraper");
 
 program
   .description("Scraper CLI for Finance Dashboard")
-  .argument("<string>", "string to split")
   .requiredOption(
     "-t, --type <type>",
     "select historical or new. default is new"
   )
-  .option("-s, --since <string>", "since_id of last scraped tweet")
+  .option("-f, --from <string>", "start date in ISO format")
+  .option("-t, --to <string>", "end date in ISO format")
   .action(async (arg, options) => {
-    try {
-      await scraper().new(options.type)();
-    } catch (err) {
-      console.log(err);
-    }
+    console.log(arg);
+    // try {
+    //   await scraper().new(options.type)();
+    // } catch (err) {
+    //   console.log(err);
+    // }
   });
 
 program.parse();

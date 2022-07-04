@@ -5,8 +5,9 @@ A public facing project to track, analyze and visualize tweets about financial c
 ## Scraper CLI
 
 ```
-node scraper-cli.js --type=new
-node scraper-cli.js --type=historical
+node scraper-cli.js --type=new --from=2021-12-31T18:30:00.000Z
+
+node scraper-cli.js --type=historical --from=2021-12-31T18:30:00.000Z --to=2022-06-29T18:30:00.000Z
 ```
 
 ## Developing Locally
