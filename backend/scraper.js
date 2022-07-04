@@ -3,20 +3,23 @@ const { searchAllTweetsMentioning } = require("./twitter/mentions");
 const { Error } = require("./db/sequelize/models");
 const { adapterRestToSql } = require("./db/tweet.adapter.rest-to-db");
 const { save } = require("./db/tweet");
+const { handles } = require("./config");
 
-async function historicalDataScraper() {
+async function historicalDataScraper(arg) {
   console.log(`Scraping Historical Data`);
-  for await (const tweet of searchAllTweetsMentioning("bankofbaroda")) {
-    try {
-      const sqlpayload = adapterRestToSql(tweet);
-      await save(sqlpayload);
-    } catch (err) {
-      console.log(`Error :  Could not save Tweet`);
-      console.log(err);
-      await Error.create({
-        type: "CREATE_MENTIONED_TWEET",
-        message: JSON.stringify(err).slice(0, 499),
-      });
+  for (const user of handles) {
+    for await (const tweet of searchAllTweetsMentioning(user, arg)) {
+      try {
+        const sqlpayload = adapterRestToSql(tweet);
+        await save(sqlpayload);
+      } catch (err) {
+        console.log(`Error :  Could not save Tweet`);
+        console.log(err);
+        await Error.create({
+          type: "CREATE_MENTIONED_TWEET",
+          message: JSON.stringify(err).slice(0, 499),
+        });
+      }
     }
   }
 }
@@ -27,8 +30,8 @@ function newDataScraper() {
 
 function scraper() {
   return {
-    new(type) {
-      switch (type) {
+    new(arg) {
+      switch (arg.type) {
         case "historical":
           return historicalDataScraper;
         case "new":
