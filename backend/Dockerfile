@@ -1,7 +1,7 @@
 FROM node:15.7.0-alpine3.12 
 WORKDIR /app
 
-RUN apk add vim curl
+RUN apk add vim curl sqlite
 
 COPY package.json /app/package.json
 RUN npm install
