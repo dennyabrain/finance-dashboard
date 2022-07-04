@@ -1,11 +1,12 @@
-# fly.toml file generated for debugger on 2022-07-04T15:08:29+05:30
+# fly.toml file generated for finance-dashboard on 2022-07-04T20:19:58+05:30
 
-app = "debugger"
+app = "finance-dashboard"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
 [env]
+  NODE_ENV="production"
 
 [experimental]
   allowed_public_ports = []
