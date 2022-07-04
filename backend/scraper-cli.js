@@ -10,12 +10,11 @@ program
   .option("-f, --from <string>", "start date in ISO format")
   .option("-t, --to <string>", "end date in ISO format")
   .action(async (arg, options) => {
-    console.log(arg);
-    // try {
-    //   await scraper().new(options.type)();
-    // } catch (err) {
-    //   console.log(err);
-    // }
+    try {
+      await scraper().new(arg)(arg);
+    } catch (err) {
+      console.log(err);
+    }
   });
 
 program.parse();

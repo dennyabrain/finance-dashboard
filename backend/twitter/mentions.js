@@ -1,6 +1,6 @@
 const { client } = require("./client");
 
-async function searchTweetsMentioning(userHandle, paginationToken) {
+async function searchTweetsMentioning(userHandle, arg, paginationToken) {
   const payload = {
     tweet: {
       fields: [
@@ -21,8 +21,8 @@ async function searchTweetsMentioning(userHandle, paginationToken) {
     },
     max_results: 100,
     query: `@${userHandle} -is:retweet`,
-    start_time: "2021-12-31T18:30:00.000Z", // Jan 1,2022
-    end_time: "2022-06-29T18:30:00.000Z", // June 30,2022
+    start_time: arg.from,
+    end_time: arg.to,
   };
   if (paginationToken) {
     payload.pagination_token = paginationToken;
@@ -55,13 +55,17 @@ async function searchTweetsMentioning(userHandle, paginationToken) {
   return { data, includes, meta };
 }
 
-async function* searchAllTweetsMentioning(userHandle) {
-  const { data, includes, meta } = await searchTweetsMentioning(userHandle);
+async function* searchAllTweetsMentioning(userHandle, arg) {
+  const { data, includes, meta } = await searchTweetsMentioning(
+    userHandle,
+    arg
+  );
   yield* data;
   let { next_token } = meta;
   while (next_token) {
     const { data, includes, meta } = await searchTweetsMentioning(
       userHandle,
+      arg,
       next_token
     );
     next_token = meta.next_token;
