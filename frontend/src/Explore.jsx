@@ -31,14 +31,16 @@ const Explore = () => {
   }, []);
 
   useEffect(async () => {
-    console.log(currentQuery, pgNum);
-    const response = await axios.post(`${config.API_URL}/tweet/query/`, {
-      ...currentQuery,
-      page: pgNum,
-    });
+    if (pgNum != 0) {
+      console.log(currentQuery, pgNum);
+      const response = await axios.post(`${config.API_URL}/tweet/query/`, {
+        ...currentQuery,
+        page: pgNum,
+      });
 
-    const fetchedTweets = response.data.tweets;
-    setTweets(fetchedTweets);
+      const fetchedTweets = response.data.tweets;
+      setTweets(fetchedTweets);
+    }
   }, [pgNum]);
 
   async function onOptionChange(type, value) {
@@ -201,7 +203,7 @@ const Explore = () => {
       <Heading level={5} fill={true}>
         {label}
       </Heading>
-      {tweets.length > 0 ? (
+      {tweets && tweets.length > 0 ? (
         <Box align={"center"} direction={"row"} gap={"small"}>
           <Box
             onClick={() => {

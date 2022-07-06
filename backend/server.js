@@ -7,7 +7,7 @@ const { enableFeatures } = require("./features");
 app.use(cors());
 app.options("*", cors());
 app.use(express.json());
-app.use(express.static("dist"));
+// app.use(express.static("dist"));
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
