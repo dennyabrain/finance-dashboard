@@ -1,6 +1,20 @@
 const { sequelize } = require("../../db/sequelize/models");
 
-async function getAll(page = 0) {}
+async function getAll(page = 0) {
+  const query = `
+    SELECT
+    MentionedTweets.id, MentionedTweets.eTwitterId, 
+    MentionedTweets.text, MentionedTweets.eTwitterCreatedAt
+    FROM MentionedTweets
+    LIMIT ${page * 10},10;
+  `;
+  const query2 = `
+    SELECT COUNT(*) as count FROM MentionedTweets
+  `;
+  const [tweets, metadata] = await sequelize.query(query);
+  const [count, metadataCount] = await sequelize.query(query2);
+  return { tweets, count: count[0].count };
+}
 
 async function getById(id) {}
 

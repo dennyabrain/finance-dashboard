@@ -5,6 +5,7 @@ import { LinkNext, LinkPrevious } from "grommet-icons";
 import axios from "axios";
 import { Link } from "@reach/router";
 import { PlainLink } from "./components/Links";
+import config from "../config";
 
 const Timeline = () => {
   const [tweets, setTweets] = useState([]);
@@ -12,15 +13,11 @@ const Timeline = () => {
   const [totalPages, setTotalPages] = useState(0);
 
   useEffect(async () => {
-    const tweets = [];
+    const response = await axios.get(`${config.API_URL}/tweets/page/${pgNum}`);
 
-    const { data } = await axios.get(
-      `http://localhost:3000/tweets/page/${pgNum}`
-    );
-
-    console.log(data);
-    setTotalPages(data.count / 5);
-    setTweets(data.rows);
+    console.log(response);
+    setTotalPages(response.data.count / 5);
+    setTweets(response.data.tweets);
   }, [pgNum]);
 
   return (
@@ -63,7 +60,9 @@ const Timeline = () => {
               </Text>
               <Text size={"medium"} weight={"300"}>
                 <PlainLink to={`${tweet.id}`}>
-                  {new Date(tweet.tCreatedAt).toDateString()}
+                  {new Date(
+                    tweet.eTwitterCreatedAt.slice(0, -7)
+                  ).toDateString()}
                 </PlainLink>
               </Text>
             </Box>

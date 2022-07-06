@@ -7,6 +7,7 @@ const {
   getByContextAnnotationEntity,
   getByLanguage,
   getByHashtag,
+  getAll,
 } = require("./controller");
 
 async function getHandle(req, res) {
@@ -119,6 +120,20 @@ async function getTweetByCondition(req, res) {
   }
 }
 
+async function getTweets(req, res) {
+  const { page } = req.params;
+  console.log(page);
+  try {
+    const tweets = await getAll(page);
+    res.json(tweets);
+  } catch (err) {
+    console.log(`Error : fetching timeline`);
+    console.log(err);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
+  }
+}
+
 module.exports = (expressApp) => {
   expressApp.post("/api/tweet/query/", getTweetByCondition);
+  expressApp.get("/api/tweets/page/:page", getTweets);
 };
