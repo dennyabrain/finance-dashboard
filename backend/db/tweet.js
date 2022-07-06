@@ -53,7 +53,12 @@ async function save(tweet) {
   });
 }
 
-async function get(id) {}
+async function get(id) {
+  return MentionedTweet.findOne({
+    where: { id },
+    include: { all: true, nested: true },
+  });
+}
 
 async function getAll(pageNum, condensed = true) {
   if (condensed) {

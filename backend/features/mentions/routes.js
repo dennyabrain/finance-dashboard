@@ -1,4 +1,5 @@
 const { StatusCodes } = require("http-status-codes");
+const { get } = require("../../db/tweet");
 const { getByLabel } = require("../labels/controller");
 const {
   getByMentions,
@@ -133,7 +134,20 @@ async function getTweets(req, res) {
   }
 }
 
+async function getTweet(req, res) {
+  const { id } = req.params;
+  try {
+    const tweet = await get(id);
+    res.json(tweet);
+  } catch (err) {
+    console.log(`Error : fetching timeline`);
+    console.log(err);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
+  }
+}
+
 module.exports = (expressApp) => {
   expressApp.post("/api/tweet/query/", getTweetByCondition);
   expressApp.get("/api/tweets/page/:page", getTweets);
+  expressApp.get("/api/tweets/:id", getTweet);
 };

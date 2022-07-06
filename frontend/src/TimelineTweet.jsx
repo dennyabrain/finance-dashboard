@@ -3,6 +3,7 @@ import { useLocation } from "@reach/router";
 import { Box, Heading, Text } from "grommet";
 import axios from "axios";
 import ReactJson from "react-json-view";
+import config from "../config";
 
 const TimelineTweet = () => {
   const [tweet, setTweet] = useState({});
@@ -10,7 +11,7 @@ const TimelineTweet = () => {
 
   useEffect(async () => {
     const tweetId = location.pathname.split("/")[2];
-    const res = await axios.get(`http://localhost:3000/tweet/${tweetId}`);
+    const res = await axios.get(`${config.API_URL}/tweets/${tweetId}`);
     console.log(res.data);
     setTweet(res.data);
   }, []);
