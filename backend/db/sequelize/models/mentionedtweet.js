@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       MentionedTweet.hasOne(models.Author);
+      MentionedTweet.hasOne(models.Label);
       MentionedTweet.hasOne(models.PublicMetric);
       MentionedTweet.hasOne(models.Entity);
       MentionedTweet.hasMany(models.ContextAnnotation);

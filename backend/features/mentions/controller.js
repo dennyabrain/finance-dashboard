@@ -118,8 +118,6 @@ async function getByLanguage(languageCode, page = 0) {
   return { tweets };
 }
 
-async function getByLabel(label, page = 0) {}
-
 module.exports = {
   getAll,
   getById,
@@ -130,5 +128,4 @@ module.exports = {
   getByURL,
   getByContextAnnotationEntity,
   getByLanguage,
-  getByLabel,
 };

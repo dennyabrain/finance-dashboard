@@ -25,9 +25,9 @@ async function getTopMentionedAccounts(limit = 10) {
 
 async function getTopAnnotations(limit = 10) {
   const query = `
-    SELECT DISTINCT type,count(*) as count 
+    SELECT DISTINCT normalizedText,count(*) as count 
     FROM EntityAnnotations 
-    GROUP BY type 
+    GROUP BY normalizedText 
     ORDER BY count DESC LIMIT ${limit};
     `;
   const [results, metadata] = await sequelize.query(query);
@@ -67,6 +67,16 @@ async function getTopLanguages(limit = 10) {
   return { languages: results ? results : {} };
 }
 
+async function getLabels(limit = 10) {
+  const query = `
+      SELECT DISTINCT label,count(*) as count 
+      FROM Labels 
+      GROUP BY label;
+    `;
+  const [results, metadata] = await sequelize.query(query);
+  return { labels: results ? results : {} };
+}
+
 async function getAllCategories(limit = 10) {
   const categories = await Promise.all([
     getTopHashtags(limit),
@@ -75,6 +85,7 @@ async function getAllCategories(limit = 10) {
     getTopURLs(limit),
     getContextAnnotationEntity(limit),
     getTopLanguages(limit),
+    getLabels(limit),
   ]);
   return Object.assign({}, ...categories);
 }

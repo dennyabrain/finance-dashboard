@@ -12,12 +12,12 @@ export default function Tweet({ tweets }) {
           pad={"medium"}
         >
           <Text size={"large"}>{tweet.text}</Text>
-          <Text size={"medium"} weight={"500"}>
+          {/* <Text size={"medium"} weight={"500"}>
             {tweet.authorName}
-          </Text>
+          </Text> */}
           <Text size={"medium"} weight={"500"}>
             <Link to={`/timeline/${tweet.id}`}>
-              {new Date(tweet.tCreatedAt).toDateString()}
+              {new Date(tweet.eTwitterCreatedAt.slice(0, -7)).toDateString()}
             </Link>
           </Text>
         </Box>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Heading, Text } from "grommet";
 import axios from "axios";
+import { LinkNext, LinkPrevious } from "grommet-icons";
 import Tweet from "./components/Tweet";
 import config from "../config";
 
@@ -14,7 +15,10 @@ const Explore = () => {
     urls: [],
     contextEntities: [],
     languages: [],
+    labels: [],
   });
+  const [pgNum, setPgNum] = useState(0);
+  const [currentQuery, setCurrentQuery] = useState(undefined);
 
   useEffect(() => {
     async function getAggregates() {
@@ -26,45 +30,31 @@ const Explore = () => {
     getAggregates();
   }, []);
 
+  useEffect(async () => {
+    console.log(currentQuery, pgNum);
+    const response = await axios.post(`${config.API_URL}/tweet/query/`, {
+      ...currentQuery,
+      page: pgNum,
+    });
+
+    const fetchedTweets = response.data.tweets;
+    setTweets(fetchedTweets);
+  }, [pgNum]);
+
   async function onOptionChange(type, value) {
-    console.log({ type, value });
     let fetchedTweets = [];
-    switch (type) {
-      case "language":
-        const resL = await axios.get("http://localhost:3000/tweets/query", {
-          params: {
-            type,
-            value: value.code,
-            pg: 0,
-          },
-        });
-        fetchedTweets = resL.data.tweets;
-        // console.log(res.data);
-        break;
-      case "entity":
-        const resE = await axios.get("http://localhost:3000/tweets/query", {
-          params: {
-            type,
-            value: value,
-            pg: 0,
-          },
-        });
-        console.log(resE);
-        fetchedTweets = resE.data.tweets;
-        break;
-      case "hashtag":
-        const resF = await axios.get("http://localhost:3000/tweets/query", {
-          params: {
-            type,
-            value: value,
-            pg: 0,
-          },
-        });
-        fetchedTweets = resF.data.tweets;
-        break;
-      default:
-        break;
-    }
+    setCurrentQuery({
+      type,
+      value,
+      page: pgNum,
+    });
+    const response = await axios.post(`${config.API_URL}/tweet/query/`, {
+      type,
+      value,
+    });
+
+    fetchedTweets = response.data.tweets;
+
     setTweets(fetchedTweets);
     setLabel(
       `showing tweets for ${type} : ${value.label ? value.label : value}`
@@ -81,7 +71,7 @@ const Explore = () => {
         {aggregate.languages.map((language, ix) => (
           <Box
             key={ix}
-            onClick={() => onOptionChange("language", language)}
+            onClick={() => onOptionChange("language", language.lang)}
             direction={"row"}
             width={"fit-content"}
           >
@@ -103,7 +93,7 @@ const Explore = () => {
           <Box
             width={"fit-content"}
             key={ix}
-            onClick={() => onOptionChange("hashtag", hashtag)}
+            onClick={() => onOptionChange("hashtag", hashtag.tag)}
           >
             <Text size={"small"}>{`#${hashtag.tag}(${hashtag.count})`}</Text>
           </Box>
@@ -120,7 +110,10 @@ const Explore = () => {
           Mentions{" "}
         </Text>
         {aggregate.mentions.map((mention, ix) => (
-          <Box key={ix} onClick={() => onOptionChange("mention", mention)}>
+          <Box
+            key={ix}
+            onClick={() => onOptionChange("mentions", mention.username)}
+          >
             <Text
               size={"small"}
             >{`${mention.username}(${mention.count})`}</Text>
@@ -141,7 +134,7 @@ const Explore = () => {
         {aggregate.contextEntities.map((contextEntity, ix) => (
           <Box
             key={ix}
-            onClick={() => onOptionChange("contextEntity", contextEntity)}
+            onClick={() => onOptionChange("contextEntity", contextEntity.name)}
           >
             <Text
               size={"small"}
@@ -160,7 +153,7 @@ const Explore = () => {
           URLs{" "}
         </Text>
         {aggregate.urls.map((url, ix) => (
-          <Box key={ix} onClick={() => onOptionChange("url", url)}>
+          <Box key={ix} onClick={() => onOptionChange("url", url.url)}>
             <Text size={"small"}>{`${url.url}(${url.count})`}</Text>
           </Box>
         ))}
@@ -178,11 +171,29 @@ const Explore = () => {
         {aggregate.annotations.map((annotation, ix) => (
           <Box
             key={ix}
-            onClick={() => onOptionChange("annotations", annotation.type)}
+            onClick={() =>
+              onOptionChange("annotations", annotation.normalizedText)
+            }
           >
             <Text
               size={"small"}
-            >{`${annotation.type}(${annotation.count})`}</Text>
+            >{`${annotation.normalizedText}(${annotation.count})`}</Text>
+          </Box>
+        ))}
+      </Box>
+
+      <Box
+        direction={"row-responsive"}
+        gap={"small"}
+        wrap={true}
+        align={"center"}
+      >
+        <Text weight={600} size={"medium"}>
+          Labels{" "}
+        </Text>
+        {aggregate.labels.map((label, ix) => (
+          <Box key={ix} onClick={() => onOptionChange("labels", label.label)}>
+            <Text size={"small"}>{`${label.label}(${label.count})`}</Text>
           </Box>
         ))}
       </Box>
@@ -190,6 +201,27 @@ const Explore = () => {
       <Heading level={5} fill={true}>
         {label}
       </Heading>
+      {tweets.length > 0 ? (
+        <Box align={"center"} direction={"row"} gap={"small"}>
+          <Box
+            onClick={() => {
+              if (pgNum != 0) setPgNum(pgNum - 1);
+            }}
+            focusIndicator={false}
+          >
+            <LinkPrevious size={"medium"} />
+          </Box>
+
+          <Box
+            onClick={() => {
+              setPgNum(pgNum + 1);
+            }}
+            focusIndicator={false}
+          >
+            <LinkNext size={"medium"} />
+          </Box>
+        </Box>
+      ) : null}
       <Tweet tweets={tweets} />
     </Box>
   );

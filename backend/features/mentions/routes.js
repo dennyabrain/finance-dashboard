@@ -1,10 +1,12 @@
 const { StatusCodes } = require("http-status-codes");
+const { getByLabel } = require("../labels/controller");
 const {
   getByMentions,
   getByAnnotation,
   getByURL,
   getByContextAnnotationEntity,
   getByLanguage,
+  getByHashtag,
 } = require("./controller");
 
 async function getHandle(req, res) {
@@ -77,16 +79,46 @@ async function getLanguage(req, res) {
   }
 }
 
+async function getTweetByCondition(req, res) {
+  let { type, value, page } = req.body;
+  page = page ? page : 0;
+  console.log({ type, value, page });
+  try {
+    let tweets = {};
+    switch (type) {
+      case "hashtag":
+        tweets = await getByHashtag(value, page);
+        break;
+      case "language":
+        tweets = await getByLanguage(value, page);
+        break;
+      case "mentions":
+        tweets = await getByMentions(value, page);
+        break;
+      case "contextEntity":
+        tweets = await getByContextAnnotationEntity(value, page);
+        break;
+      case "url":
+        tweets = await getByURL(value, page);
+        break;
+      case "annotations":
+        tweets = await getByAnnotation(value, page);
+        break;
+      case "labels":
+        tweets = await getByLabel(value, page);
+        break;
+      default:
+        tweets = {};
+    }
+    console.log(tweets);
+    res.json(tweets);
+  } catch (err) {
+    console.log(`Error : fetching tweet`);
+    console.log(err);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
+  }
+}
+
 module.exports = (expressApp) => {
-  expressApp.post("/api/tweet/handle", getHandle);
-  expressApp.post("/api/tweet/hashtag", getHashtag);
-  expressApp.post("/api/tweet/mention", getMention);
-  expressApp.post("/api/tweet/annotation", getAnnotation);
-  expressApp.post("/api/tweet/url", getURL);
-  expressApp.post(
-    "/api/tweet/context-annotation-entity",
-    getContextAnnotationEntity
-  );
-  expressApp.post("/api/tweet/language", getLanguage);
-  expressApp.get("/api/tweet/by/", getTweetByCondition);
+  expressApp.post("/api/tweet/query/", getTweetByCondition);
 };
