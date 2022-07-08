@@ -1,6 +1,6 @@
 const { sequelize } = require("../../db/sequelize/models");
 
-async function search(searchTerm, bankFilters, page = 0) {
+async function search(query, bankFilters, page = 0) {
   const query = `
     SELECT
     MentionedTweets.id, MentionedTweets.text, MentionedTweets.eTwitterCreatedAt
@@ -11,7 +11,7 @@ async function search(searchTerm, bankFilters, page = 0) {
     ON MentionedTweets.id = Entities.mentionedTweetId 
     WHERE MentionedTweets.id 
     IN (SELECT mentionedTweetId FROM tweetText 
-        WHERE text MATCH "${searchTerm}" ORDER BY rank) 
+        WHERE text MATCH "${query}" ORDER BY rank) 
     AND EntityMentions.username IN ("${bankFilters.join('","')}")
     LIMIT ${page * 10},10;
     `;
