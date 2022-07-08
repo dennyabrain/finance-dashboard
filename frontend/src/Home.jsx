@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Heading, Text, DataChart } from "grommet";
+import { Box, Heading, Text, DataChart, Paragraph } from "grommet";
 import axios from "axios";
 
 const Home = () => {
@@ -12,6 +12,9 @@ const Home = () => {
   }, []);
   return (
     <Box>
+      <Paragraph>
+        FinDash catalogues complaints against Financial Institutions on Twitter.
+      </Paragraph>
       {/* <Heading level={3}>Tweet Count Time Series</Heading> */}
       <Box>
         <DataChart
