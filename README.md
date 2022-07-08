@@ -13,10 +13,22 @@ node scraper-cli.js --type=historical --from=2021-12-31T18:30:00.000Z --to=2022-
 ## Developing Locally
 
 ```
-
 # creates all tables in sqlite database at ./backend/db/data/
-npm run db:initno
+npm run db:init
 
+```
+
+Enable Full Text Search of the tweet text
+
+```
+sqlite3 data.sqlite3
+
+CREATE VIRTUAL TABLE tweetText USING fts5(mentionedTweetId, text);
+
+CREATE TRIGGER IF NOT EXISTS indexTweet AFTER INSERT ON MentionedTweets
+BEGIN
+INSERT INTO tweetText VALUES(new.text);
+END;
 ```
 
 ## Deploying on Fly.io
