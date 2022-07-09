@@ -9,6 +9,7 @@ import Explore from "./Explore";
 import Theme from "./components/Theme";
 import { PlainLink } from "./components/Links";
 import { Currency } from "grommet-icons";
+import Search from "./Search";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -16,7 +17,7 @@ function App() {
   return (
     <Grommet theme={Theme} full>
       <Box className="App" flex margin={{ top: "medium" }}>
-        <Box width={"720px"} alignSelf={"center"} gap={"small"}>
+        <Box width={"960px"} alignSelf={"center"} gap={"small"}>
           <Box direction={"row"} align={"center"} gap={"small"}>
             <Currency size={"large"} color={"brand"} />
             <PlainLink to={"/"}>
@@ -35,6 +36,9 @@ function App() {
             <Link to="explore">
               <Text size={"small"}>Explore</Text>
             </Link>
+            <Link to="search">
+              <Text size={"small"}>Search</Text>
+            </Link>
           </Box>
           <Box>
             <Router>
@@ -42,7 +46,13 @@ function App() {
               <Timeline path="timeline" />
               <TimelineTweet path="timeline/:tweetId" />
               <Explore path="explore" />
+              <Search path="search" />
             </Router>
+          </Box>
+          <Box>
+            <Text size={"xsmall"} margin={{ top: "medium", bottom: "medium" }}>
+              FinDash is developed by ________
+            </Text>
           </Box>
         </Box>
       </Box>
