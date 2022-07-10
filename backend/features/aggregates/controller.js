@@ -1,6 +1,6 @@
 const { sequelize } = require("../../db/sequelize/models");
 
-async function getTopHashtags(limit = 10) {
+async function getTopHashtags(limit = 25) {
   const query = `
     SELECT DISTINCT tag,count(*) as count 
     FROM EntityHashtags 
@@ -11,7 +11,7 @@ async function getTopHashtags(limit = 10) {
   return { hashtags: results ? results : {} };
 }
 
-async function getTopMentionedAccounts(limit = 10) {
+async function getTopMentionedAccounts(limit = 25) {
   const query = `
     SELECT distinct username,count(*) as count 
     FROM EntityMentions 
@@ -23,7 +23,7 @@ async function getTopMentionedAccounts(limit = 10) {
   return { mentions: results ? results : {} };
 }
 
-async function getTopAnnotations(limit = 10) {
+async function getTopAnnotations(limit = 25) {
   const query = `
     SELECT DISTINCT normalizedText,count(*) as count 
     FROM EntityAnnotations 
@@ -34,7 +34,7 @@ async function getTopAnnotations(limit = 10) {
   return { annotations: results ? results : {} };
 }
 
-async function getTopURLs(limit = 10) {
+async function getTopURLs(limit = 25) {
   const query = `
     SELECT distinct url,count(*) as count 
     FROM EntityURLs 
@@ -45,7 +45,7 @@ async function getTopURLs(limit = 10) {
   return { urls: results ? results : {} };
 }
 
-async function getContextAnnotationEntity(limit = 10) {
+async function getContextAnnotationEntity(limit = 25) {
   const query = `
     SELECT distinct name,count(*) as count 
     FROM ContextAnnotationEntities 
@@ -56,7 +56,7 @@ async function getContextAnnotationEntity(limit = 10) {
   return { contextEntities: results ? results : {} };
 }
 
-async function getTopLanguages(limit = 10) {
+async function getTopLanguages(limit = 25) {
   const query = `
     SELECT distinct lang,count(*) as count 
     FROM MentionedTweets 
@@ -77,7 +77,7 @@ async function getLabels(limit = 10) {
   return { labels: results ? results : {} };
 }
 
-async function getAllCategories(limit = 10) {
+async function getAllCategories(limit = 25) {
   const categories = await Promise.all([
     getTopHashtags(limit),
     getTopMentionedAccounts(limit),
