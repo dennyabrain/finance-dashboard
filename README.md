@@ -27,7 +27,7 @@ CREATE VIRTUAL TABLE tweetText USING fts5(mentionedTweetId, text);
 
 CREATE TRIGGER IF NOT EXISTS indexTweet AFTER INSERT ON MentionedTweets
 BEGIN
-INSERT INTO tweetText VALUES(new.text);
+INSERT INTO tweetText VALUES(new.id, new.text);
 END;
 ```
 
