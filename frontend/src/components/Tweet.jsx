@@ -22,6 +22,7 @@ export default function Tweet({ tweets }) {
           </Text>
         </Box>
       ))}
+      {tweets.length === 0 ? <Text>No tweets to show</Text> : null}
     </Box>
   );
 }
