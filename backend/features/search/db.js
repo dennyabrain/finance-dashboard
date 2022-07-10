@@ -19,8 +19,28 @@ async function searchText(searchTerm, bankFilters, page = 0) {
     ${bankFilterQuery}
     LIMIT ${page * 10},10;
     `;
-  const [tweets, metadata] = await sequelize.query(query);
-  return { tweets };
+  const countQuery = `
+    SELECT
+    COUNT(*) as count
+    FROM EntityMentions 
+    LEFT JOIN Entities 
+    ON Entities.id = EntityMentions.entityId 
+    LEFT JOIN MentionedTweets 
+    ON MentionedTweets.id = Entities.mentionedTweetId 
+    WHERE MentionedTweets.id 
+    IN (SELECT mentionedTweetId FROM tweetText 
+        WHERE text MATCH "${searchTerm}" ORDER BY rank) 
+    ${bankFilterQuery}`;
+
+  const [[tweets, metadata], [count, countMetadata]] = await Promise.all([
+    sequelize.query(query),
+    sequelize.query(countQuery),
+  ]);
+  return {
+    tweets,
+    count: count[0].count,
+    pages: Math.ceil(count[0].count / 10),
+  };
 }
 
 async function searchHashtag(searchTerm, bankFilters, page = 0) {
@@ -41,8 +61,28 @@ async function searchHashtag(searchTerm, bankFilters, page = 0) {
     WHERE EntityHashtags.tag="${searchTerm}" ${bankFilterQuery}
     LIMIT ${page * 10},10;
     `;
-  const [tweets, metadata] = await sequelize.query(query);
-  return { tweets };
+  const countQuery = `
+    SELECT
+    COUNT(*) as count
+    FROM EntityHashtags 
+    LEFT JOIN Entities 
+    ON Entities.id = EntityHashtags.entityId 
+    LEFT JOIN EntityMentions 
+    ON Entities.id = EntityMentions.entityId
+    LEFT JOIN MentionedTweets 
+    ON MentionedTweets.id = Entities.mentionedTweetId 
+    WHERE EntityHashtags.tag="${searchTerm}" ${bankFilterQuery}
+    LIMIT ${page * 10},10`;
+
+  const [[tweets, metadata], [count, countMetadata]] = await Promise.all([
+    sequelize.query(query),
+    sequelize.query(countQuery),
+  ]);
+  return {
+    tweets,
+    count: count[0].count,
+    pages: Math.ceil(count[0].count / 10),
+  };
 }
 
 async function search(searchTerm, ...args) {

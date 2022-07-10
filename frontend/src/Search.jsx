@@ -12,6 +12,7 @@ import { Search as SearchIcon } from "grommet-icons";
 import axios from "axios";
 import config from "../config";
 import Tweet from "./components/Tweet";
+import Pager from "./components/Pager";
 
 const BANKS = [
   "bankofbaroda",
@@ -34,6 +35,8 @@ const Search = () => {
   const [searchString, setSearchString] = useState(undefined);
   const [tweets, setTweets] = useState([]);
   const [bankFilter, setBankFilter] = useState([]);
+  const [page, setPage] = useState(undefined);
+  const [pageCount, setPageCount] = useState(undefined);
 
   async function onSearch() {
     console.log("search clicked", searchString);
@@ -42,14 +45,22 @@ const Search = () => {
       filters: {
         banks: bankFilter,
       },
+      page,
     });
     console.log(response);
     setTweets(response.data.tweets);
+    setPageCount(response.data.pages);
   }
 
   useEffect(() => {
+    setPage(undefined);
     onSearch();
+    setPage(0);
   }, [bankFilter]);
+
+  useEffect(() => {
+    onSearch();
+  }, [page]);
 
   return (
     <Box>
@@ -80,7 +91,14 @@ const Search = () => {
             />
           </Box>
         </Box>
-        <Box flex pad={{ left: "medium" }}>
+        <Box gap={"small"} flex pad={{ left: "medium" }}>
+          <Pager
+            page={page}
+            pageCount={pageCount}
+            onPreviousClicked={() => setPage(page - 1)}
+            onNextClicked={() => setPage(page + 1)}
+          />
+
           <Tweet tweets={tweets} />
         </Box>
       </Box>
