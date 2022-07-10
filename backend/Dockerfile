@@ -4,7 +4,7 @@ WORKDIR /app
 RUN apk add vim curl sqlite python3
 
 COPY package.json /app/package.json
-RUN npm 
+RUN npm install
 COPY . .
 
 EXPOSE 3000
