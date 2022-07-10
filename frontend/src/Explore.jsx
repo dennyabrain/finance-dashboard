@@ -66,7 +66,12 @@ const Explore = () => {
   return (
     <Box>
       {/* <Heading level={3}>Explore</Heading> */}
-      <Box direction={"row-responsive"} gap={"small"} align={"center"}>
+      <Box
+        direction={"row-responsive"}
+        gap={"small"}
+        align={"center"}
+        wrap={true}
+      >
         <Text weight={600} size={"medium"}>
           Language{" "}
         </Text>
@@ -74,8 +79,6 @@ const Explore = () => {
           <Box
             key={ix}
             onClick={() => onOptionChange("language", language.lang)}
-            direction={"row"}
-            width={"fit-content"}
           >
             <Text size={"small"}>{`${language.lang}(${language.count})`}</Text>
           </Box>
