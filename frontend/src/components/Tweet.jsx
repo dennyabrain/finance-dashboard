@@ -20,9 +20,9 @@ export default function Tweet({ tweets }) {
               {new Date(tweet.eTwitterCreatedAt.slice(0, -7)).toDateString()}
             </Link>
           </Text>
+          {tweets.length === 0 ? <Text>No tweets to show</Text> : null}
         </Box>
       ))}
-      {tweets.length === 0 ? <Text>No tweets to show</Text> : null}
     </Box>
   );
 }

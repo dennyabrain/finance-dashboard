@@ -7,6 +7,7 @@ import {
   Button,
   Keyboard,
   CheckBoxGroup,
+  Spinner,
 } from "grommet";
 import { Search as SearchIcon } from "grommet-icons";
 import axios from "axios";
@@ -35,10 +36,12 @@ const Search = () => {
   const [searchString, setSearchString] = useState(undefined);
   const [tweets, setTweets] = useState([]);
   const [bankFilter, setBankFilter] = useState([]);
-  const [page, setPage] = useState(undefined);
+  const [page, setPage] = useState(0);
   const [pageCount, setPageCount] = useState(undefined);
+  const [loading, setLoading] = useState(false);
 
   async function onSearch() {
+    setLoading(true);
     console.log("search clicked", searchString);
     const response = await axios.post(`${config.API_URL}/search`, {
       query: searchString,
@@ -47,19 +50,28 @@ const Search = () => {
       },
       page,
     });
-    console.log(response);
+    console.log({ response: response.data });
     setTweets(response.data.tweets);
     setPageCount(response.data.pages);
+    setLoading(false);
   }
 
+  // todo : this is a temp fix.
   useEffect(() => {
-    setPage(undefined);
-    onSearch();
-    setPage(0);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (searchString) {
+      onSearch();
+      setPage(0);
+    }
   }, [bankFilter]);
 
   useEffect(() => {
-    onSearch();
+    if (searchString) {
+      onSearch();
+    }
   }, [page]);
 
   return (
@@ -91,6 +103,7 @@ const Search = () => {
             />
           </Box>
         </Box>
+
         <Box gap={"small"} flex pad={{ left: "medium" }}>
           <Pager
             page={page}
@@ -99,7 +112,14 @@ const Search = () => {
             onNextClicked={() => setPage(page + 1)}
           />
 
-          <Tweet tweets={tweets} />
+          {loading ? (
+            <Box align={"center"} direction={"row"} gap={"small"}>
+              <Spinner size={"xsmall"} />
+              <Text>Searching </Text>
+            </Box>
+          ) : (
+            <Tweet tweets={tweets} />
+          )}
         </Box>
       </Box>
     </Box>
